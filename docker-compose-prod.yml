@@ -1,0 +1,20 @@
+name: degen
+
+services:
+  api:
+    container_name: degen-api
+    image: degen-api:latest
+    build:
+      context: ./apps/api
+    expose:
+      - "8000"
+
+  web:
+    container_name: degen-web
+    image: degen-web:latest
+    build:
+      context: ./apps/web
+    expose:
+      - "3000"
+    depends_on:
+      - api
