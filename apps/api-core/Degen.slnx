@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Degen.Api/Degen.Api.csproj" />
+    <Project Path="src/Degen.Application/Degen.Application.csproj" />
+    <Project Path="src/Degen.Contracts/Degen.Contracts.csproj" />
+    <Project Path="src/Degen.Domain/Degen.Domain.csproj" />
+    <Project Path="src/Degen.Infrastructure/Degen.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Degen.Application.Tests/Degen.Application.Tests.csproj" />
+    <Project Path="tests/Degen.Domain.Tests/Degen.Domain.Tests.csproj" />
+    <Project Path="tests/Degen.Infrastructure.IntegrationTests/Degen.Infrastructure.IntegrationTests.csproj" />
+  </Folder>
+</Solution>

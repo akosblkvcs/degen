@@ -1,0 +1,38 @@
+# IDE
+.vs/
+.vscode/settings.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# .NET
+**/bin/
+**/obj/
+
+# Node / Angular
+**/node_modules/
+**/dist/
+**/.angular/
+
+# Python
+**/__pycache__/
+**/.pytest_cache/
+**/venv/
+**/.venv/
+**/.ruff_cache/
+*.egg-info/
+
+# Coverage / test output
+**/coverage/
+**/TestResults/
+**/.coverage
+**/htmlcov/
