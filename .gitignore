@@ -1,6 +1,10 @@
 # IDE
 .vs/
 .vscode/settings.json
+.idea/
+*.launch
+*.sublime-workspace
+.history/
 
 # OS
 .DS_Store
@@ -22,6 +26,10 @@ docker-compose.override.yml
 **/node_modules/
 **/dist/
 **/.angular/
+**/tmp/
+**/out-tsc/
+npm-debug.log
+yarn-error.log
 
 # Python
 **/__pycache__/
@@ -36,3 +44,7 @@ docker-compose.override.yml
 **/TestResults/
 **/.coverage
 **/htmlcov/
+testem.log
+
+# Sass
+.sass-cache/

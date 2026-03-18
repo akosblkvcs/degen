@@ -1,5 +1,4 @@
 services:
-  # ── Infrastructure ──────────────────────────────────────
   postgres:
     image: timescale/timescaledb:latest-pg16
     container_name: degen-postgres
@@ -17,8 +16,6 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
-    networks:
-      - degen
 
   rabbitmq:
     image: rabbitmq:4-management-alpine
@@ -36,43 +33,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - degen
-
-  # ── Application Services ────────────────────────────────
-  api-core:
-    build:
-      context: ../../apps/api-core
-      dockerfile: Dockerfile
-    container_name: degen-api-core
-    ports:
-      - "5000:8080"
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__Default: "Host=postgres;Port=5432;Database=degen;Username=degen;Password=devpassword"
-      RabbitMQ__Host: rabbitmq
-      RabbitMQ__Username: degen
-      RabbitMQ__Password: devpassword
-      Services__MarketData: "http://worker-market:8080"
-      Services__Execution: "http://svc-execution:8080"
-      Services__Analytics: "http://svc-analytics:8080"
-    depends_on:
-      postgres:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - degen
 
 volumes:
   pgdata:
   rabbitdata:
-
-networks:
-  degen:
-    driver: bridge
