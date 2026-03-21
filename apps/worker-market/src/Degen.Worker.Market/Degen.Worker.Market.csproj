@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <PropertyGroup>
+    <UserSecretsId>dotnet-Degen.Worker.Market-5b2c2866-caa8-4203-b4f3-05acff399f98</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="RabbitMQ.Client" />
+    <PackageReference Include="Serilog.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="System.Reactive" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\api-core\src\Degen.Contracts\Degen.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\api-core\src\Degen.Domain\Degen.Domain.csproj" />
+    <ProjectReference Include="..\..\..\api-core\src\Degen.Infrastructure\Degen.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
