@@ -7,9 +7,9 @@ namespace Degen.Domain.MarketData;
 /// </summary>
 public class Instrument : Entity
 {
-    public string Symbol { get; private set; } = default!; // e.g. "BTC/USD"
-    public string ExchangeSymbol { get; private set; } = default!; // e.g. "XBTUSD" (exchange-native)
-    public string Exchange { get; private set; } = default!; // e.g. "kraken"
+    public string Symbol { get; private set; } = default!;
+    public string ExchangeSymbol { get; private set; } = default!;
+    public string Exchange { get; private set; } = default!;
 
     public Guid BaseAssetId { get; private set; }
     public Asset BaseAsset { get; private set; } = default!;
@@ -22,7 +22,7 @@ public class Instrument : Entity
     public decimal? MinOrderSize { get; private set; }
     public bool IsActive { get; private set; }
 
-    private Instrument() { } // EF Core
+    private Instrument() { }
 
     public static Instrument Create(
         string symbol,
@@ -39,7 +39,7 @@ public class Instrument : Entity
         {
             Symbol = symbol,
             ExchangeSymbol = exchangeSymbol,
-            Exchange = exchange.ToLowerInvariant(),
+            Exchange = exchange,
             BaseAssetId = baseAssetId,
             QuoteAssetId = quoteAssetId,
             PriceDecimals = priceDecimals,

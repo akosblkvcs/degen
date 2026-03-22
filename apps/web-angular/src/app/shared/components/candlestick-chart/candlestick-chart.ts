@@ -1,20 +1,9 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  Input,
-  OnChanges,
-  OnDestroy,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
-import {
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import type { OnChanges, OnDestroy, AfterViewInit, SimpleChanges } from '@angular/core';
+import { createChart, ColorType, CandlestickSeries, HistogramSeries } from 'lightweight-charts';
+import type {
   CandlestickData,
-  CandlestickSeries,
-  ColorType,
-  createChart,
   HistogramData,
-  HistogramSeries,
   IChartApi,
   ISeriesApi,
   Time,

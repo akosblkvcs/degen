@@ -31,7 +31,7 @@ try
     // SignalR
     builder.Services.AddSignalR();
 
-    // CORS — permissive for dev
+    // CORS
     builder.Services.AddCors(options =>
     {
         options.AddPolicy(
@@ -58,9 +58,9 @@ try
 
     app.MapControllers();
 
-    // Health check
+    // Health check endpoint
     app.MapGet(
-        "/health",
+        "/healthz",
         () =>
             Results.Ok(
                 new
