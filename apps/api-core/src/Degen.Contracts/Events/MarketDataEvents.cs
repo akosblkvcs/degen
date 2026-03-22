@@ -1,10 +1,9 @@
 namespace Degen.Contracts.Events;
 
 /// <summary>
-/// Published by worker-market when a candle closes.
-/// Consumed by api-core (SignalR relay) and svc-analytics (signal generation).
+/// Published on every OHLC update from the exchange (interim and close).
 /// </summary>
-public sealed record CandleClosedEvent(
+public sealed record CandleUpdateEvent(
     string Symbol,
     string Exchange,
     string Interval,
@@ -13,5 +12,6 @@ public sealed record CandleClosedEvent(
     decimal High,
     decimal Low,
     decimal Close,
-    decimal Volume
+    decimal Volume,
+    bool IsClosed
 );

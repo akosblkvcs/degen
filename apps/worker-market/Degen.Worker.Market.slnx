@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="tests/Degen.Worker.Market.Tests/Degen.Worker.Market.Tests.csproj" />
+  <Project Path="src/Degen.Worker.Market/Degen.Worker.Market.csproj" />
+</Solution>
