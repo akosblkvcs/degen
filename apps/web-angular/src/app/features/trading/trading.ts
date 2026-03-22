@@ -1,15 +1,23 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import type { OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ApiService, InstrumentDto } from '../../core/services/api';
-import {
-  CandlestickChartComponent,
-  ChartCandle,
-} from '../../shared/components/candlestick-chart/candlestick-chart';
+import type { InstrumentDto } from '../../core/services/api';
+import { ApiService } from '../../core/services/api';
+import type { ChartCandle } from '../../shared/components/candlestick-chart/candlestick-chart';
+import { CandlestickChartComponent } from '../../shared/components/candlestick-chart/candlestick-chart';
 
 @Component({
   selector: 'app-trading',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule, CandlestickChartComponent],
   template: `
     <div class="trading-layout">
@@ -204,11 +212,13 @@ import {
 })
 export class TradingComponent implements OnInit, OnDestroy {
   private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   searchQuery = '';
   searchResults: InstrumentDto[] = [];
   selectedInstrument: InstrumentDto | null = null;
-  selectedInterval = '1h';
+  selectedInterval = '1m';
   candles: ChartCandle[] = [];
 
   timeframes = [
@@ -223,16 +233,19 @@ export class TradingComponent implements OnInit, OnDestroy {
   private searchTimeout: ReturnType<typeof setTimeout> | null = null;
 
   ngOnInit(): void {
-    // Load default instrument (BTC/USD on Kraken)
-    this.api.searchInstruments('BTC/USD').subscribe({
-      next: results => {
-        const btcUsd = results.find(i => i.symbol === 'BTC/USD' && i.exchange === 'kraken');
-        if (btcUsd) {
-          this.selectInstrument(btcUsd);
-        }
-      },
-      error: err => console.error('Failed to load default instrument', err),
-    });
+    this.api
+      .searchInstruments('BTC/USD')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: results => {
+          const btcUsd = results.find(i => i.symbol === 'BTC/USD' && i.exchange === 'Kraken');
+          if (btcUsd) {
+            this.selectInstrument(btcUsd);
+          }
+          this.cdr.markForCheck();
+        },
+        error: err => console.error('Failed to load default instrument', err),
+      });
   }
 
   ngOnDestroy(): void {
@@ -244,14 +257,21 @@ export class TradingComponent implements OnInit, OnDestroy {
 
     if (this.searchQuery.length < 1) {
       this.searchResults = [];
+      this.cdr.markForCheck();
       return;
     }
 
-    // Debounce 300ms
     this.searchTimeout = setTimeout(() => {
-      this.api.searchInstruments(this.searchQuery).subscribe(results => {
-        this.searchResults = results;
-      });
+      this.api
+        .searchInstruments(this.searchQuery)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: results => {
+            this.searchResults = results;
+            this.cdr.markForCheck();
+          },
+          error: err => console.error('Search failed', err),
+        });
     }, 300);
   }
 
@@ -259,11 +279,13 @@ export class TradingComponent implements OnInit, OnDestroy {
     this.selectedInstrument = instrument;
     this.searchQuery = '';
     this.searchResults = [];
+    this.cdr.markForCheck();
     this.loadCandles();
   }
 
   selectInterval(interval: string): void {
     this.selectedInterval = interval;
+    this.cdr.markForCheck();
     this.loadCandles();
   }
 
@@ -273,19 +295,23 @@ export class TradingComponent implements OnInit, OnDestroy {
     const to = new Date().toISOString();
     const from = this.getFromDate().toISOString();
 
-    this.api.getCandles(this.selectedInstrument.id, this.selectedInterval, from, to).subscribe({
-      next: candles => {
-        this.candles = candles.map(c => ({
-          time: c.timestamp,
-          open: c.open,
-          high: c.high,
-          low: c.low,
-          close: c.close,
-          volume: c.volume,
-        }));
-      },
-      error: err => console.error('Failed to load candles', err),
-    });
+    this.api
+      .getCandles(this.selectedInstrument.id, this.selectedInterval, from, to)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: candles => {
+          this.candles = candles.map(c => ({
+            time: c.timestamp,
+            open: c.open,
+            high: c.high,
+            low: c.low,
+            close: c.close,
+            volume: c.volume,
+          }));
+          this.cdr.markForCheck();
+        },
+        error: err => console.error('Failed to load candles', err),
+      });
   }
 
   private getFromDate(): Date {
@@ -294,9 +320,9 @@ export class TradingComponent implements OnInit, OnDestroy {
       '1m': 6,
       '5m': 24,
       '15m': 72,
-      '1h': 168, // 7 days
-      '4h': 720, // 30 days
-      '1d': 4320, // 180 days
+      '1h': 168,
+      '4h': 720,
+      '1d': 4320,
     };
     const hours = intervalHours[this.selectedInterval] ?? 168;
     return new Date(now.getTime() - hours * 60 * 60 * 1000);

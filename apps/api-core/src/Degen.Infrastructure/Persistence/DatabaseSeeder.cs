@@ -35,13 +35,13 @@ public static class DatabaseSeeder
         // Instruments (Kraken pairs)
         var instruments = new[]
         {
-            Instrument.Create("BTC/USD", "XBTUSD", "kraken", btc.Id, usd.Id, 1, 8, 0.0001m),
-            Instrument.Create("ETH/USD", "ETHUSD", "kraken", eth.Id, usd.Id, 2, 8, 0.005m),
-            Instrument.Create("SOL/USD", "SOLUSD", "kraken", sol.Id, usd.Id, 3, 8, 0.02m),
-            Instrument.Create("ADA/USD", "ADAUSD", "kraken", ada.Id, usd.Id, 6, 6, 5m),
-            Instrument.Create("DOT/USD", "DOTUSD", "kraken", dot.Id, usd.Id, 4, 8, 0.5m),
-            Instrument.Create("BTC/EUR", "XBTEUR", "kraken", btc.Id, eur.Id, 1, 8, 0.0001m),
-            Instrument.Create("ETH/EUR", "ETHEUR", "kraken", eth.Id, eur.Id, 2, 8, 0.005m),
+            Instrument.Create("BTC/USD", "BTC/USD", "Kraken", btc.Id, usd.Id, 1, 8, 0.0001m),
+            Instrument.Create("ETH/USD", "ETH/USD", "Kraken", eth.Id, usd.Id, 2, 8, 0.005m),
+            Instrument.Create("SOL/USD", "SOL/USD", "Kraken", sol.Id, usd.Id, 3, 8, 0.02m),
+            Instrument.Create("ADA/USD", "ADA/USD", "Kraken", ada.Id, usd.Id, 6, 6, 5m),
+            Instrument.Create("DOT/USD", "DOT/USD", "Kraken", dot.Id, usd.Id, 4, 8, 0.5m),
+            Instrument.Create("BTC/EUR", "BTC/EUR", "Kraken", btc.Id, eur.Id, 1, 8, 0.0001m),
+            Instrument.Create("ETH/EUR", "ETH/EUR", "Kraken", eth.Id, eur.Id, 2, 8, 0.005m),
         };
 
         db.Instruments.AddRange(instruments);
