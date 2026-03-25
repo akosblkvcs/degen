@@ -27,8 +27,8 @@ public class EventPublisher : IAsyncDisposable
         var factory = new ConnectionFactory
         {
             HostName = _configuration["RabbitMQ:Host"] ?? "localhost",
-            UserName = _configuration["RabbitMQ:Username"] ?? "degen",
-            Password = _configuration["RabbitMQ:Password"] ?? "devpassword",
+            UserName = _configuration["RabbitMQ:Username"] ?? "rabbitmq",
+            Password = _configuration["RabbitMQ:Password"] ?? "rabbitmq",
             Port = int.TryParse(_configuration["RabbitMQ:Port"], out var port) ? port : 5672,
         };
 
