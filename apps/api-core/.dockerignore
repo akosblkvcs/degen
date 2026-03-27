@@ -1,6 +1,9 @@
+tests/
+Degen.slnx
+
 **/bin/
 **/obj/
 **/TestResults/
-tests/
-.git/
-*.md
+
+**/appsettings.Development.json
+**/BuildHost-*/

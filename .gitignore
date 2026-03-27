@@ -1,5 +1,4 @@
 # OS / IDE
-.vs/
 .vscode/
 .DS_Store
 
@@ -8,9 +7,11 @@
 .env.*
 !.env.example
 
-# Packaging
+# Dependencies
 **/node_modules/
-**/dist/
+
+# Packaging
+**/out-tsc/
 
 # .NET
 **/bin/
@@ -18,7 +19,9 @@
 
 # Angular
 **/.angular/
-**/out-tsc/
+
+# Tooling
+**/tmp/
 
 # Logs
 logs/

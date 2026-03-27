@@ -31,5 +31,5 @@ public enum AssetType
     Crypto,
     Fiat,
     Stock,
-    Etf,
+    ETF,
 }

@@ -5,11 +5,29 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
     <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Sinks.Console" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.Development.json"
+          CopyToOutputDirectory="Never"
+          CopyToPublishDirectory="Never" />
+  </ItemGroup>
+
+  <Target Name="CleanPublishOutput" AfterTargets="Publish">
+    <ItemGroup>
+      <PublishFilesToDelete Include="$(PublishDir)**\*.pdb" />
+      <PublishFilesToDelete Include="$(PublishDir)web.config" />
+    </ItemGroup>
+
+    <Delete Files="@(PublishFilesToDelete)" />
+
+    <RemoveDir Directories="$(PublishDir)BuildHost-net472"
+               Condition="Exists('$(PublishDir)BuildHost-net472')" />
+    <RemoveDir Directories="$(PublishDir)BuildHost-netcore"
+               Condition="Exists('$(PublishDir)BuildHost-netcore')" />
+  </Target>
 </Project>

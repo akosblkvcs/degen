@@ -1,8 +1,7 @@
-# ── Build stage ──────────────────────────────────────────
+# Build stage
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-# Copy csproj files first for layer caching
 COPY Directory.Build.props .
 COPY Directory.Packages.props .
 COPY src/Degen.Domain/Degen.Domain.csproj src/Degen.Domain/
@@ -13,19 +12,22 @@ COPY src/Degen.Api/Degen.Api.csproj src/Degen.Api/
 
 RUN dotnet restore src/Degen.Api
 
-# Copy everything and publish
 COPY . .
-RUN dotnet publish src/Degen.Api -c Release -o /app
+RUN dotnet publish src/Degen.Api/Degen.Api.csproj \
+    -c Release \
+    -o /out \
+    /p:UseAppHost=false \
+    /p:DebugSymbols=false \
+    /p:DebugType=None
 
-# ── Runtime stage ────────────────────────────────────────
+# Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 
-COPY --from=build /app .
+COPY --from=build /out .
 
 USER app
 
-ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "Degen.Api.dll"]
