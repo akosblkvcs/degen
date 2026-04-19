@@ -20,6 +20,7 @@ public class WatchlistsController(ISender mediator) : ControllerBase
     public async Task<IActionResult> GetAll(CancellationToken ct)
     {
         var result = await mediator.Send(new GetWatchlistsQuery(), ct);
+
         return Ok(result);
     }
 
@@ -35,6 +36,7 @@ public class WatchlistsController(ISender mediator) : ControllerBase
     )
     {
         var result = await mediator.Send(new CreateWatchlistCommand(request.Name), ct);
+
         return CreatedAtAction(nameof(GetAll), result);
     }
 
@@ -51,6 +53,7 @@ public class WatchlistsController(ISender mediator) : ControllerBase
     )
     {
         var result = await mediator.Send(new AddToWatchlistCommand(watchlistId, instrumentId), ct);
+
         return Ok(result);
     }
 
@@ -67,6 +70,7 @@ public class WatchlistsController(ISender mediator) : ControllerBase
     )
     {
         await mediator.Send(new RemoveFromWatchlistCommand(watchlistId, instrumentId), ct);
+
         return NoContent();
     }
 }

@@ -13,7 +13,8 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         }
         catch (ValidationException ex)
         {
-            logger.LogWarning(ex, "Validation failed");
+            LogMessages.RequestValidationFailed(logger, ex);
+
             context.Response.StatusCode = 400;
             context.Response.ContentType = "application/json";
 
@@ -34,7 +35,8 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         }
         catch (KeyNotFoundException ex)
         {
-            logger.LogWarning(ex, "Resource not found");
+            LogMessages.ResourceNotFound(logger, ex);
+
             context.Response.StatusCode = 404;
             context.Response.ContentType = "application/json";
 
@@ -44,7 +46,8 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unhandled exception");
+            LogMessages.UnhandledException(logger, ex);
+
             context.Response.StatusCode = 500;
             context.Response.ContentType = "application/json";
 

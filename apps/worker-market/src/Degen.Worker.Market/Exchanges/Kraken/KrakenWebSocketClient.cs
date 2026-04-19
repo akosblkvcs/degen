@@ -73,7 +73,7 @@ public class KrakenWebSocketClient : IDisposable
 
         var json = JsonSerializer.Serialize(message, JsonOptions);
 
-        LogMessages.WebSocketSending(_logger, ExchangeName, json);
+        LogMessages.WebSocketMessageSent(_logger, ExchangeName, json);
 
         var bytes = Encoding.UTF8.GetBytes(json);
         await ws.SendAsync(bytes, WebSocketMessageType.Text, true, ct);
@@ -132,7 +132,7 @@ public class KrakenWebSocketClient : IDisposable
                 }
                 catch (JsonException ex)
                 {
-                    LogMessages.WebSocketMessageParseFailed(_logger, ExchangeName, ex);
+                    LogMessages.WebSocketJsonParseFailed(_logger, ExchangeName, ex);
                 }
             }
         }
@@ -142,7 +142,7 @@ public class KrakenWebSocketClient : IDisposable
         }
         catch (Exception ex)
         {
-            LogMessages.WebSocketReceiveLoopError(_logger, ExchangeName, ex);
+            LogMessages.WebSocketReceiveLoopFailed(_logger, ExchangeName, ex);
         }
     }
 

@@ -67,7 +67,7 @@ public class CandlePersistenceService : BackgroundService
             }
             catch (Exception ex)
             {
-                LogMessages.PersistenceFailed(_logger, batch.Count, ex);
+                LogMessages.CandlePersistenceFailed(_logger, batch.Count, ex);
 
                 // Batch retained — will retry on next channel read
                 // Brief delay to avoid tight retry loop on persistent DB failure

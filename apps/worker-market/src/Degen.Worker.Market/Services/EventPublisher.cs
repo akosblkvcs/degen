@@ -43,7 +43,7 @@ public class EventPublisher : IAsyncDisposable
             cancellationToken: ct
         );
 
-        LogMessages.RabbitMqInitialized(_logger);
+        LogMessages.RabbitMqPublisherInitialized(_logger);
     }
 
     public async Task PublishCandleUpdateAsync(CandleUpdateEvent evt, CancellationToken ct)
@@ -72,7 +72,7 @@ public class EventPublisher : IAsyncDisposable
             _publishLock.Release();
         }
 
-        LogMessages.PublishedCandleUpdate(_logger, routingKey);
+        LogMessages.CandleUpdatePublished(_logger, routingKey);
     }
 
     public async Task PublishTickAsync(

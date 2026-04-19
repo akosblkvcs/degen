@@ -16,26 +16,20 @@ public class LoggingBehavior<TRequest, TResponse>(
     )
     {
         var requestName = typeof(TRequest).Name;
-        logger.LogInformation("Handling {RequestName}", requestName);
+
+        LogMessages.RequestHandling(logger, requestName);
 
         var stopwatch = Stopwatch.StartNew();
         var response = await next(cancellationToken);
         stopwatch.Stop();
 
-        if (stopwatch.ElapsedMilliseconds > 500)
+        var elapsedMs = stopwatch.ElapsedMilliseconds;
+        if (elapsedMs > 500)
         {
-            logger.LogWarning(
-                "Long running request: {RequestName} ({ElapsedMs}ms)",
-                requestName,
-                stopwatch.ElapsedMilliseconds
-            );
+            LogMessages.RequestSlow(logger, requestName, elapsedMs);
         }
 
-        logger.LogInformation(
-            "Handled {RequestName} in {ElapsedMs}ms",
-            requestName,
-            stopwatch.ElapsedMilliseconds
-        );
+        LogMessages.RequestHandled(logger, requestName, elapsedMs);
 
         return response;
     }

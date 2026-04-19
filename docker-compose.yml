@@ -6,14 +6,13 @@ services:
     container_name: degen-postgres
     restart: unless-stopped
     environment:
-      - POSTGRES_DB=degen
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql
-      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - db:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 15s
@@ -24,19 +23,20 @@ services:
     image: rabbitmq:4-management-alpine
     container_name: degen-rabbitmq
     environment:
-      - RABBITMQ_DEFAULT_USER=${RabbitMQ__Username}
-      - RABBITMQ_DEFAULT_PASS=${RabbitMQ__Password}
+      RABBITMQ_DEFAULT_USER: ${RabbitMQ__Username}
+      RABBITMQ_DEFAULT_PASS: ${RabbitMQ__Password}
     ports:
       - "${RabbitMQ__Port}:5672"
       - "${RabbitMQ__ManagementPort}:15672"
     volumes:
-      - rabbitdata:/var/lib/rabbitmq
+      - rmq:/var/lib/rabbitmq
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "check_running"]
       interval: 15s
-      timeout: 5s
+      timeout: 3s
       retries: 5
+      start_period: 5s
 
 volumes:
-  pgdata:
-  rabbitdata:
+  db:
+  rmq:
