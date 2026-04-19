@@ -13,9 +13,7 @@ public class WatchlistConfiguration : IEntityTypeConfiguration<Watchlist>
         builder.HasKey(w => w.Id);
 
         builder.Property(w => w.Name).HasMaxLength(100).IsRequired();
-
         builder.Property(w => w.TenantId);
-
         builder
             .HasMany(w => w.Items)
             .WithOne()
@@ -39,7 +37,6 @@ public class WatchlistItemConfiguration : IEntityTypeConfiguration<WatchlistItem
             .WithMany()
             .HasForeignKey(i => i.InstrumentId)
             .OnDelete(DeleteBehavior.Cascade);
-
         builder.Property(i => i.SortOrder).IsRequired();
     }
 }

@@ -1,4 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <DebugType>embedded</DebugType>
+    <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Degen.Application\Degen.Application.csproj" />
     <ProjectReference Include="..\Degen.Infrastructure\Degen.Infrastructure.csproj" />
@@ -12,22 +17,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="appsettings.Development.json"
-          CopyToOutputDirectory="Never"
-          CopyToPublishDirectory="Never" />
+    <None
+      Update="appsettings.Development.json"
+      CopyToOutputDirectory="Never"
+      CopyToPublishDirectory="Never"
+    />
   </ItemGroup>
 
   <Target Name="CleanPublishOutput" AfterTargets="Publish">
-    <ItemGroup>
-      <PublishFilesToDelete Include="$(PublishDir)**\*.pdb" />
-      <PublishFilesToDelete Include="$(PublishDir)web.config" />
-    </ItemGroup>
-
-    <Delete Files="@(PublishFilesToDelete)" />
-
-    <RemoveDir Directories="$(PublishDir)BuildHost-net472"
-               Condition="Exists('$(PublishDir)BuildHost-net472')" />
-    <RemoveDir Directories="$(PublishDir)BuildHost-netcore"
-               Condition="Exists('$(PublishDir)BuildHost-netcore')" />
+    <RemoveDir
+      Directories="$(PublishDir)BuildHost-net472"
+      Condition="Exists('$(PublishDir)BuildHost-net472')"
+    />
+    <RemoveDir
+      Directories="$(PublishDir)BuildHost-netcore"
+      Condition="Exists('$(PublishDir)BuildHost-netcore')"
+    />
   </Target>
 </Project>

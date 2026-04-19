@@ -9,6 +9,7 @@ log_configuration:
 
 processes:
   postgres:
+    disabled: false
     command: docker compose up postgres
     ready_log_line: "database system is ready to accept connections"
     log_location: ./logs/postgres.log
@@ -16,6 +17,7 @@ processes:
       command: docker compose down postgres -t 30
 
   rabbitmq:
+    disabled: false
     command: docker compose up rabbitmq
     ready_log_line: "Server startup complete"
     log_location: ./logs/rabbitmq.log
@@ -25,9 +27,26 @@ processes:
     shutdown:
       command: docker compose down rabbitmq -t 30
 
+  build-api:
+    disabled: false
+    working_dir: ./apps/api-core
+    command: dotnet build Degen.slnx -c Debug
+    log_location: ./logs/build-api.log
+    availability:
+      restart: "no"
+
+  build-worker:
+    disabled: false
+    working_dir: ./apps/worker-market
+    command: dotnet build Degen.Worker.Market.slnx -c Debug
+    log_location: ./logs/build-worker.log
+    availability:
+      restart: "no"
+
   api:
+    disabled: false
     working_dir: ./apps/api-core/src/Degen.Api
-    command: dotnet run
+    command: dotnet run --no-build -c Debug
     log_location: ./logs/api.log
     readiness_probe:
       http_get:
@@ -43,10 +62,13 @@ processes:
         condition: process_log_ready
       rabbitmq:
         condition: process_log_ready
+      build-api:
+        condition: process_completed_successfully
 
   worker:
+    disabled: false
     working_dir: ./apps/worker-market/src/Degen.Worker.Market
-    command: dotnet run
+    command: dotnet run --no-build -c Debug
     ready_log_line: "RabbitMQ publisher initialized"
     log_location: ./logs/worker.log
     depends_on:
@@ -54,8 +76,11 @@ processes:
         condition: process_log_ready
       rabbitmq:
         condition: process_log_ready
+      build-worker:
+        condition: process_completed_successfully
 
   web:
+    disabled: false
     working_dir: ./apps/web-angular
     command: pnpm start
     ready_log_line: "Local:   http://localhost:4200/"
