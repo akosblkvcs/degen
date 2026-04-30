@@ -13,11 +13,8 @@ public class AssetConfiguration : IEntityTypeConfiguration<Asset>
         builder.HasKey(a => a.Id);
 
         builder.Property(a => a.Symbol).HasMaxLength(20).IsRequired();
-
         builder.Property(a => a.Name).HasMaxLength(100).IsRequired();
-
         builder.Property(a => a.Type).HasConversion<string>().HasMaxLength(20).IsRequired();
-
         builder.Property(a => a.Decimals).IsRequired();
 
         builder.HasIndex(a => a.Symbol).IsUnique();

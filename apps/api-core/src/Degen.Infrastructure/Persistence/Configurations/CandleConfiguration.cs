@@ -19,7 +19,6 @@ public class CandleConfiguration : IEntityTypeConfiguration<Candle>
         });
 
         builder.Property(c => c.Interval).HasMaxLength(5).IsRequired();
-
         builder.Property(c => c.Timestamp).IsRequired();
         builder.Property(c => c.Open).HasPrecision(18, 8).IsRequired();
         builder.Property(c => c.High).HasPrecision(18, 8).IsRequired();

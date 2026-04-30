@@ -50,7 +50,7 @@ public class MarketDataWorker : BackgroundService
             }
             catch (Exception ex)
             {
-                LogMessages.WorkerError(_logger, _exchange.ExchangeName, ex);
+                LogMessages.WorkerFailed(_logger, _exchange.ExchangeName, ex);
             }
 
             if (!stoppingToken.IsCancellationRequested)
@@ -61,12 +61,12 @@ public class MarketDataWorker : BackgroundService
             }
         }
 
-        LogMessages.WorkerStopping(_logger, _exchange.ExchangeName);
+        LogMessages.WorkerStopped(_logger, _exchange.ExchangeName);
     }
 
     private async Task RunAsync(CancellationToken stoppingToken)
     {
-        LogMessages.WorkerStarting(_logger, _exchange.ExchangeName);
+        LogMessages.WorkerStarted(_logger, _exchange.ExchangeName);
 
         // Session token — cancelled when this session ends
         _sessionCts = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
@@ -81,7 +81,7 @@ public class MarketDataWorker : BackgroundService
 
         while (symbols.Count == 0)
         {
-            LogMessages.NoInstruments(_logger, _exchange.ExchangeName);
+            LogMessages.InstrumentsEmpty(_logger, _exchange.ExchangeName);
 
             await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
             await _symbolMapper.LoadMappingsAsync(_exchange.ExchangeName, stoppingToken);
@@ -107,7 +107,7 @@ public class MarketDataWorker : BackgroundService
                 await _exchange.SubscribeTickerAsync(symbol, sessionToken);
             }
 
-            LogMessages.SubscriptionComplete(
+            LogMessages.SymbolsSubscribed(
                 _logger,
                 symbols.Count,
                 intervals.Length,
@@ -143,7 +143,7 @@ public class MarketDataWorker : BackgroundService
             var instrument = _symbolMapper.Resolve(e.Symbol);
             if (instrument is null)
             {
-                LogMessages.UnknownSymbol(_logger, _exchange.ExchangeName, e.Symbol);
+                LogMessages.SymbolUnknown(_logger, _exchange.ExchangeName, e.Symbol);
 
                 return;
             }
@@ -204,7 +204,7 @@ public class MarketDataWorker : BackgroundService
         }
         catch (Exception ex)
         {
-            LogMessages.CandleProcessingError(_logger, _exchange.ExchangeName, e.Symbol, ex);
+            LogMessages.CandleProcessingFailed(_logger, _exchange.ExchangeName, e.Symbol, ex);
         }
     }
 
@@ -238,7 +238,7 @@ public class MarketDataWorker : BackgroundService
         }
         catch (Exception ex)
         {
-            LogMessages.TickProcessingError(_logger, _exchange.ExchangeName, e.Symbol, ex);
+            LogMessages.TickProcessingFailed(_logger, _exchange.ExchangeName, e.Symbol, ex);
         }
     }
 }

@@ -7,14 +7,11 @@ namespace Degen.Infrastructure.Persistence;
 
 public static class DatabaseInitializer
 {
-    /// <summary>
-    /// Applies pending EF Core migrations on startup in development environment.
-    /// </summary>
     public static async Task InitializeDatabaseAsync(this IHost app)
     {
         using var scope = app.Services.CreateScope();
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<AppDbContext>>();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<AppDbContext>>();
 
         try
         {
@@ -23,22 +20,21 @@ public static class DatabaseInitializer
 
             if (migrations.Count > 0)
             {
-                logger.LogInformation(
-                    "Applying {Count} pending migration(s): {Migrations}",
-                    migrations.Count,
-                    string.Join(", ", migrations)
-                );
+                LogMessages.PendingMigrationsApplying(logger, migrations.Count);
+
                 await db.Database.MigrateAsync();
-                logger.LogInformation("Database migrations applied successfully");
+
+                LogMessages.DatabaseMigrationsApplied(logger);
             }
             else
             {
-                logger.LogInformation("Database is up to date");
+                LogMessages.DatabaseUpToDate(logger);
             }
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to apply database migrations");
+            LogMessages.DatabaseMigrationFailed(logger, ex);
+
             throw;
         }
     }

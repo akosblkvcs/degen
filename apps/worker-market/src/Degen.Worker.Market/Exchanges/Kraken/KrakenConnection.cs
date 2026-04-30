@@ -70,7 +70,7 @@ public class KrakenConnection : IExchangeConnection, IDisposable
             var success = await pending.Completion.Task.WaitAsync(timeoutCts.Token);
             if (success)
             {
-                LogMessages.SubscribedOhlc(_logger, symbol, interval, ExchangeName);
+                LogMessages.OhlcSubscribed(_logger, symbol, interval, ExchangeName);
             }
             else
             {
@@ -117,7 +117,7 @@ public class KrakenConnection : IExchangeConnection, IDisposable
             var success = await pending.Completion.Task.WaitAsync(timeoutCts.Token);
             if (success)
             {
-                LogMessages.SubscribedTicker(_logger, symbol, ExchangeName);
+                LogMessages.TickerSubscribed(_logger, symbol, ExchangeName);
             }
             else
             {
@@ -159,7 +159,7 @@ public class KrakenConnection : IExchangeConnection, IDisposable
             // Handle errors
             if (root.TryGetProperty("error", out var errorProp))
             {
-                LogMessages.ExchangeError(
+                LogMessages.WebSocketErrorReceived(
                     _logger,
                     ExchangeName,
                     errorProp.GetString() ?? "unknown error"
@@ -193,7 +193,7 @@ public class KrakenConnection : IExchangeConnection, IDisposable
         }
         catch (Exception ex)
         {
-            LogMessages.ParseFailed(_logger, ExchangeName, ex);
+            LogMessages.DomainMessageParseFailed(_logger, ExchangeName, ex);
         }
     }
 
@@ -233,13 +233,7 @@ public class KrakenConnection : IExchangeConnection, IDisposable
                 ? errProp.GetString()
                 : "unknown";
 
-            LogMessages.ExchangeSubscribeError(
-                _logger,
-                ExchangeName,
-                channel,
-                symbol,
-                error ?? "unknown"
-            );
+            LogMessages.SubscribeFailed(_logger, ExchangeName, channel, symbol, error ?? "unknown");
         }
     }
 

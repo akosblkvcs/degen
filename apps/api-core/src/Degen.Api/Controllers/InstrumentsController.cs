@@ -22,6 +22,7 @@ public class InstrumentsController(ISender mediator) : ControllerBase
             return BadRequest("Query parameter 'q' is required.");
 
         var results = await mediator.Send(new SearchInstrumentsQuery(q), ct);
+
         return Ok(results);
     }
 
@@ -34,6 +35,7 @@ public class InstrumentsController(ISender mediator) : ControllerBase
     public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
     {
         var result = await mediator.Send(new GetInstrumentQuery(id), ct);
+
         return result is null ? NotFound() : Ok(result);
     }
 
@@ -45,6 +47,7 @@ public class InstrumentsController(ISender mediator) : ControllerBase
     public async Task<IActionResult> GetByExchange(string exchange, CancellationToken ct)
     {
         var results = await mediator.Send(new GetInstrumentsByExchangeQuery(exchange), ct);
+
         return Ok(results);
     }
 }
