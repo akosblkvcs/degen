@@ -1,9 +1,0 @@
-tests/
-Degen.slnx
-
-**/bin/
-**/obj/
-**/TestResults/
-
-**/appsettings.Development.json
-**/BuildHost-*/

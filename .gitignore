@@ -2,26 +2,30 @@
 .vscode/
 .DS_Store
 
-# Environment
+# Environment / secrets
 .env
 .env.*
 !.env.example
+.envrc
 
-# Dependencies
-**/node_modules/
-
-# Packaging
-**/out-tsc/
+# Personal scratch notes
+save
+todo
 
 # .NET
 **/bin/
 **/obj/
+*.lscache
 
-# Angular
+# Node / Angular
+**/node_modules/
 **/.angular/
+**/dist/
 
-# Tooling
-**/tmp/
+# Python
+.venv/
+__pycache__/
+.python-version
 
 # Logs
 logs/
