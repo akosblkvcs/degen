@@ -1,0 +1,87 @@
+:root {
+  --bg: #0b0f14;
+  --panel: #10151c;
+  --border: #1f2937;
+  --text: #d1d9e0;
+  --muted: #64748b;
+  --accent: #4ade80;
+  --danger: #f87171;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    ui-monospace, 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.error {
+  color: var(--danger);
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 1rem 1.25rem;
+}
+
+.panel-title {
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+input,
+select,
+button {
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.6rem;
+  outline: none;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--accent);
+}
+
+input::placeholder {
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+button {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: transparent;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: rgba(74, 222, 128, 0.1);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

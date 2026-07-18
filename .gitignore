@@ -1,16 +1,25 @@
-# OS / IDE
-.vscode/
+# OS
 .DS_Store
+Thumbs.db
 
-# Environment / secrets
+# IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+.history/
+
+#Environment
 .env
 .env.*
 !.env.example
 .envrc
 
-# Personal scratch notes
-save
-todo
+# Logs
+logs/
+*.log
 
 # .NET
 **/bin/
@@ -19,13 +28,8 @@ todo
 
 # Node / Angular
 **/node_modules/
-**/.angular/
 **/dist/
-
-# Python
-.venv/
-__pycache__/
-.python-version
-
-# Logs
-logs/
+**/.angular/
+**/out-tsc/
+**/coverage/
+**/__screenshots__/

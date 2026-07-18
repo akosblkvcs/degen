@@ -1,0 +1,62 @@
+<section class="panel">
+  <h2 class="panel-title">// watchlist.instruments</h2>
+
+  <form class="add-form" (ngSubmit)="add()">
+    <input
+      name="symbol"
+      placeholder="SYMBOL"
+      [(ngModel)]="symbol"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <input
+      name="name"
+      class="grow"
+      placeholder="name (e.g. SPDR S&P 500 ETF)"
+      [(ngModel)]="name"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <select name="assetType" [(ngModel)]="assetType">
+      @for (t of assetTypes; track t) {
+        <option [value]="t">{{ t }}</option>
+      }
+    </select>
+    <button type="submit" [disabled]="saving()">
+      {{ saving() ? 'adding…' : '+ add' }}
+    </button>
+  </form>
+
+  @if (error()) {
+    <p class="error">! {{ error() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="muted">loading…</p>
+  } @else if (instruments().length === 0) {
+    <p class="muted">watchlist is empty — add your first instrument above</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>symbol</th>
+          <th>name</th>
+          <th>type</th>
+          <th>added</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (i of instruments(); track i.id) {
+          <tr>
+            <td class="sym">{{ i.symbol }}</td>
+            <td>{{ i.name }}</td>
+            <td>
+              <span class="tag">{{ i.assetType }}</span>
+            </td>
+            <td class="muted">{{ i.createdAt | date: 'yyyy-MM-dd' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

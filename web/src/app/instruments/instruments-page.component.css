@@ -1,0 +1,51 @@
+.add-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.add-form input[name='symbol'] {
+  width: 9rem;
+  text-transform: uppercase;
+}
+
+.add-form .grow {
+  flex: 1;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 0.45rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+
+tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.sym {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.tag {
+  border: 1px solid var(--border);
+  padding: 0.1rem 0.4rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
