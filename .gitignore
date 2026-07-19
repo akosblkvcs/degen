@@ -1,27 +1,35 @@
-# OS / IDE
-.vscode/
+# OS
 .DS_Store
+Thumbs.db
 
-# Environment
+# IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+.history/
+
+#Environment
 .env
 .env.*
 !.env.example
+.envrc
 
-# Dependencies
-**/node_modules/
-
-# Packaging
-**/out-tsc/
+# Logs
+logs/
+*.log
 
 # .NET
 **/bin/
 **/obj/
+*.lscache
 
-# Angular
+# Node / Angular
+**/node_modules/
+**/dist/
 **/.angular/
-
-# Tooling
-**/tmp/
-
-# Logs
-logs/
+**/out-tsc/
+**/coverage/
+**/__screenshots__/
