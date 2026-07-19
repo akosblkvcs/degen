@@ -1,3 +1,6 @@
+using Degen.Application.Common;
+using Degen.Application.MarketData;
+using Degen.Infrastructure.MarketData;
 using Degen.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,9 +21,30 @@ public static class DependencyInjection
                 "Connection string 'Default' is not configured."
             );
 
-        services.AddDbContext<AppDbContext>(options =>
+        services.AddDbContext<IAppDbContext, AppDbContext>(options =>
             options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention()
         );
+
+        services.AddScoped<ICandleStore, CandleStore>();
+
+        var marketDataBaseUrl =
+            configuration["MarketData:BaseUrl"]
+            ?? throw new InvalidOperationException(
+                "'MarketData:BaseUrl' is not configured."
+            );
+
+        services
+            .AddHttpClient<IPriceProvider, MarketDataApiPriceProvider>(client =>
+            {
+                client.BaseAddress = new Uri(
+                    marketDataBaseUrl.EndsWith('/')
+                        ? marketDataBaseUrl
+                        : marketDataBaseUrl + "/"
+                );
+            })
+            .AddStandardResilienceHandler();
+
+        services.AddHostedService<DailyCandleRefreshJob>();
 
         return services;
     }

@@ -33,6 +33,16 @@ processes:
       postgres:
         condition: process_log_ready
 
+  marketdata:
+    disabled: false
+    working_dir: ./marketdata
+    command: uv run uvicorn main:app --host 127.0.0.1 --port 5030 --reload
+    ready_log_line: "Application startup complete"
+    log_location: ./logs/marketdata.log
+    availability:
+      restart: on_failure
+      max_restarts: 3
+
   web:
     disabled: false
     working_dir: ./web

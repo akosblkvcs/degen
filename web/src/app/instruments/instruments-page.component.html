@@ -42,6 +42,8 @@
           <th>symbol</th>
           <th>name</th>
           <th>type</th>
+          <th class="num">price</th>
+          <th class="num">1d %</th>
           <th>added</th>
         </tr>
       </thead>
@@ -52,6 +54,23 @@
             <td>{{ i.name }}</td>
             <td>
               <span class="tag">{{ i.assetType }}</span>
+            </td>
+            <td class="num">
+              @let price = priceOf(i);
+              @if (price !== null) {
+                {{ price | number: '1.2-2' }}
+              } @else {
+                <span class="muted">—</span>
+              }
+            </td>
+            <td class="num">
+              @if (changeOf(i) !== null) {
+                <span [class]="changeOf(i)! >= 0 ? 'pos' : 'neg'">
+                  {{ changeOf(i)! >= 0 ? '+' : '' }}{{ changeOf(i) | number: '1.2-2' }}%
+                </span>
+              } @else {
+                <span class="muted">—</span>
+              }
             </td>
             <td class="muted">{{ i.createdAt | date: 'yyyy-MM-dd' }}</td>
           </tr>
