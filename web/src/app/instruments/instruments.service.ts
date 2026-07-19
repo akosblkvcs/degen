@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CreateInstrumentRequest, Instrument } from './instrument.model';
+import { CreateInstrumentRequest, Instrument, Quote } from './instrument.model';
 
 @Injectable({ providedIn: 'root' })
 export class InstrumentsService {
@@ -13,5 +13,9 @@ export class InstrumentsService {
 
   create(request: CreateInstrumentRequest): Observable<Instrument> {
     return this.http.post<Instrument>('/api/instruments', request);
+  }
+
+  getQuote(instrumentId: string): Observable<Quote> {
+    return this.http.get<Quote>(`/api/instruments/${instrumentId}/quote`);
   }
 }

@@ -1,67 +1,108 @@
-using Degen.Domain.Instruments;
-using Degen.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
-using Npgsql;
+using Degen.Api.Filters;
+using Degen.Application.Instruments;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Degen.Api.Endpoints;
 
-public record CreateInstrumentRequest(string? Symbol, string? Name, string? AssetType);
-
 public static class InstrumentEndpoints
 {
-    private const string DefaultUserId = "default";
+    // Route names double as OpenAPI operationIds, so they are part of the public
+    // contract that generated clients derive method names from.
+    private static class RouteNames
+    {
+        public const string List = "ListInstruments";
+        public const string Get = "GetInstrument";
+        public const string Quote = "GetQuote";
+        public const string Add = "AddInstrument";
+    }
 
-    public static IEndpointRouteBuilder MapInstrumentEndpoints(this IEndpointRouteBuilder routes)
+    public static IEndpointRouteBuilder MapInstrumentEndpoints(
+        this IEndpointRouteBuilder routes
+    )
     {
         var group = routes.MapGroup("/api/instruments");
 
-        group.MapGet("/", async (AppDbContext db, CancellationToken cancellationToken) =>
-            await db.Instruments
-                .AsNoTracking()
-                .Where(i => i.UserId == DefaultUserId)
-                .OrderBy(i => i.Symbol)
-                .ToListAsync(cancellationToken));
-
-        group.MapPost("/", async (
-            CreateInstrumentRequest request,
-            AppDbContext db,
-            CancellationToken cancellationToken) =>
-        {
-            var errors = new Dictionary<string, string[]>();
-            if (string.IsNullOrWhiteSpace(request.Symbol))
-                errors["symbol"] = ["Symbol is required."];
-            if (string.IsNullOrWhiteSpace(request.Name))
-                errors["name"] = ["Name is required."];
-            if (string.IsNullOrWhiteSpace(request.AssetType))
-                errors["assetType"] = ["AssetType is required."];
-            if (errors.Count > 0)
-                return Results.ValidationProblem(errors);
-
-            var instrument = new Instrument
-            {
-                Id = Guid.CreateVersion7(),
-                Symbol = request.Symbol!.Trim().ToUpperInvariant(),
-                Name = request.Name!.Trim(),
-                AssetType = request.AssetType!.Trim().ToLowerInvariant(),
-                UserId = DefaultUserId,
-                CreatedAt = DateTime.UtcNow,
-            };
-
-            db.Instruments.Add(instrument);
-            try
-            {
-                await db.SaveChangesAsync(cancellationToken);
-            }
-            catch (DbUpdateException ex)
-                when (ex.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
-            {
-                return Results.Conflict(
-                    new { message = $"Instrument '{instrument.Symbol}' is already on the list." });
-            }
-
-            return Results.Created($"/api/instruments/{instrument.Id}", instrument);
-        });
+        group.MapGet("/", GetAll).WithName(RouteNames.List);
+        group.MapGet("/{id:guid}", GetById).WithName(RouteNames.Get);
+        group.MapGet("/{id:guid}/quote", GetQuote).WithName(RouteNames.Quote);
+        group
+            .MapPost("/", Create)
+            .WithName(RouteNames.Add)
+            .WithValidation<AddInstrumentCommand>();
 
         return routes;
     }
+
+    private static async Task<Ok<IReadOnlyList<ListInstrumentsItem>>> GetAll(
+        ListInstrumentsHandler handler,
+        CancellationToken cancellationToken
+    ) => TypedResults.Ok(await handler.HandleAsync(cancellationToken));
+
+    private static async Task<
+        Results<Ok<GetInstrumentResponse>, ProblemHttpResult>
+    > GetById(
+        Guid id,
+        GetInstrumentHandler handler,
+        CancellationToken cancellationToken
+    ) =>
+        await handler.HandleAsync(id, cancellationToken) is { } instrument
+            ? TypedResults.Ok(instrument)
+            : NotFound("Instrument not found.");
+
+    private static async Task<Results<Ok<GetQuoteResponse>, ProblemHttpResult>> GetQuote(
+        Guid id,
+        GetQuoteHandler handler,
+        CancellationToken cancellationToken
+    ) =>
+        await handler.HandleAsync(id, cancellationToken) switch
+        {
+            GetQuoteResult.Success(var quote) => TypedResults.Ok(quote),
+            GetQuoteResult.QuoteUnavailable(var symbol) => NotFound(
+                $"No quote available for '{symbol}'."
+            ),
+            _ => NotFound("Instrument not found."),
+        };
+
+    private static async Task<
+        Results<
+            CreatedAtRoute<AddInstrumentResponse>,
+            ProblemHttpResult,
+            ValidationProblem
+        >
+    > Create(
+        AddInstrumentCommand command,
+        AddInstrumentHandler handler,
+        CancellationToken cancellationToken
+    ) =>
+        await handler.HandleAsync(command, cancellationToken) switch
+        {
+            AddInstrumentResult.Success(var instrument) => Created(instrument),
+            AddInstrumentResult.Duplicate(var symbol) => Conflict(
+                $"Instrument '{symbol}' is already on the list."
+            ),
+            AddInstrumentResult.UnknownSymbol(var symbol) => InvalidSymbol(
+                $"Symbol '{symbol}' is unknown to the market data provider."
+            ),
+            _ => throw new InvalidOperationException("Unhandled result."),
+        };
+
+    private static CreatedAtRoute<AddInstrumentResponse> Created(
+        AddInstrumentResponse instrument
+    ) =>
+        TypedResults.CreatedAtRoute(
+            instrument,
+            RouteNames.Get,
+            new { id = instrument.Id }
+        );
+
+    private static ProblemHttpResult NotFound(string detail) =>
+        TypedResults.Problem(detail, statusCode: StatusCodes.Status404NotFound);
+
+    private static ProblemHttpResult Conflict(string detail) =>
+        TypedResults.Problem(detail, statusCode: StatusCodes.Status409Conflict);
+
+    private static ValidationProblem InvalidSymbol(string message) =>
+        TypedResults.ValidationProblem(
+            new Dictionary<string, string[]> { ["symbol"] = [message] }
+        );
 }

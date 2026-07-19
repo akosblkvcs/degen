@@ -3,6 +3,7 @@ using System;
 using Degen.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,16 +12,63 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Degen.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260719192253_AddCandles")]
+    partial class AddCandles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.4")
+                .HasAnnotation("ProductVersion", "10.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Degen.Domain.Instruments.Candle", b =>
+                {
+                    b.Property<Guid>("InstrumentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("instrument_id");
+
+                    b.Property<string>("Interval")
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)")
+                        .HasColumnName("interval");
+
+                    b.Property<DateTime>("Ts")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ts");
+
+                    b.Property<decimal>("Close")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("numeric(18,6)")
+                        .HasColumnName("close");
+
+                    b.Property<decimal>("High")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("numeric(18,6)")
+                        .HasColumnName("high");
+
+                    b.Property<decimal>("Low")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("numeric(18,6)")
+                        .HasColumnName("low");
+
+                    b.Property<decimal>("Open")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("numeric(18,6)")
+                        .HasColumnName("open");
+
+                    b.Property<long>("Volume")
+                        .HasColumnType("bigint")
+                        .HasColumnName("volume");
+
+                    b.HasKey("InstrumentId", "Interval", "Ts")
+                        .HasName("pk_candles");
+
+                    b.ToTable("candles", (string)null);
+                });
 
             modelBuilder.Entity("Degen.Domain.Instruments.Instrument", b =>
                 {
@@ -67,52 +115,7 @@ namespace Degen.Infrastructure.Migrations
                     b.ToTable("instruments", (string)null);
                 });
 
-            modelBuilder.Entity("Degen.Domain.MarketData.Candle", b =>
-                {
-                    b.Property<Guid>("InstrumentId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("instrument_id");
-
-                    b.Property<string>("Interval")
-                        .HasMaxLength(8)
-                        .HasColumnType("character varying(8)")
-                        .HasColumnName("interval");
-
-                    b.Property<DateTime>("Ts")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("ts");
-
-                    b.Property<decimal>("Close")
-                        .HasPrecision(28, 12)
-                        .HasColumnType("numeric(28,12)")
-                        .HasColumnName("close");
-
-                    b.Property<decimal>("High")
-                        .HasPrecision(28, 12)
-                        .HasColumnType("numeric(28,12)")
-                        .HasColumnName("high");
-
-                    b.Property<decimal>("Low")
-                        .HasPrecision(28, 12)
-                        .HasColumnType("numeric(28,12)")
-                        .HasColumnName("low");
-
-                    b.Property<decimal>("Open")
-                        .HasPrecision(28, 12)
-                        .HasColumnType("numeric(28,12)")
-                        .HasColumnName("open");
-
-                    b.Property<long>("Volume")
-                        .HasColumnType("bigint")
-                        .HasColumnName("volume");
-
-                    b.HasKey("InstrumentId", "Interval", "Ts")
-                        .HasName("pk_candles");
-
-                    b.ToTable("candles", (string)null);
-                });
-
-            modelBuilder.Entity("Degen.Domain.MarketData.Candle", b =>
+            modelBuilder.Entity("Degen.Domain.Instruments.Candle", b =>
                 {
                     b.HasOne("Degen.Domain.Instruments.Instrument", null)
                         .WithMany()

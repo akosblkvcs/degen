@@ -33,3 +33,9 @@ logs/
 **/out-tsc/
 **/coverage/
 **/__screenshots__/
+
+# Python
+**/.venv/
+**/__pycache__/
+**/.mypy_cache/
+**/.ruff_cache/

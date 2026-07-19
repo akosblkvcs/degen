@@ -43,6 +43,19 @@ tbody tr:hover {
   font-weight: 600;
 }
 
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.pos {
+  color: var(--accent);
+}
+
+.neg {
+  color: var(--danger);
+}
+
 .tag {
   border: 1px solid var(--border);
   padding: 0.1rem 0.4rem;
